@@ -8,6 +8,10 @@ class DataLoader:
     """
 
     def __init__(self, data_path):
+        """ Load the dataset
+        
+        :param data_path: The root path of the dataset
+        """
         self.data_path = data_path
         self.load_link()
         self.load_dataset()

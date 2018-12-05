@@ -25,12 +25,44 @@ class DataLoader:
                 self.link_dict[row['patient_id']] = row['original_id']
 
 
-    def load_patient_data(self, patient_id):
-        # Get dcm filenames from the corresponding folder
+    def get_patient_data(self, patient_id):
+        """ Load the data (images + labels) of a given patient
+        :param patient_id: string, the id of the patient
+    
+        :raises:
+        """            
         dicom_fnames = self.get_patient_dicom_fnames(patient_id)
         label_fnames = self.get_patient_label_fnames(patient_id)
-        print(label_fnames)
-        
+        return self.filter_out_patient_missing_values(patient_id, dicom_fnames, label_fnames)
+
+
+    def filter_out_patient_missing_values(self, patient_id, dicom_fnames, label_fnames):
+        """ Remove the missing values for given a patient
+        :type self:
+        :param self:
+    
+        :type dicom_fnames:
+        :param dicom_fnames:
+    
+        :type label_fnames:
+        :param label_fnames:
+    
+        :raises:
+    
+        :rtype:
+        """    
+        filtered_fnames = []
+        label_id = self.link_dict[patient_id]
+        for dicom_fname in dicom_fnames:
+            # extract number from the filenames
+            number = os.path.basename(dicom_fname) # remove path
+            number, _ = os.path.splitext(number) # remove extension 
+            label_fname = "IM-0001-%04d-icontour-manual.txt" % (int(number))
+            label_fname =  os.path.join(self.data_path, 'contourfiles', label_id, 'i-contours', label_fname)
+            if label_fname in label_fnames:
+                filtered_fnames.append([dicom_fname,label_fname])
+        return filtered_fnames
+            
 
     def get_patient_dicom_fnames(self, patient_id):    
         """ Get the filenames of the DICOM files for a given patient

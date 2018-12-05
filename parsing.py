@@ -1,7 +1,7 @@
 """Parsing code for DICOMS and contour files"""
 
-import pydicom as dicom
-from pydicom.errors import InvalidDicomError
+import dicom
+from dicom.errors import InvalidDicomError
 
 import numpy as np
 from PIL import Image, ImageDraw

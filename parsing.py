@@ -70,3 +70,19 @@ def poly_to_mask(polygon, width, height):
     ImageDraw.Draw(img).polygon(xy=polygon, outline=0, fill=1)
     mask = np.array(img).astype(bool)
     return mask
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    contour = parse_contour_file("final_data/contourfiles/SC-HF-I-1/i-contours/IM-0001-0048-icontour-manual.txt")
+    dicom = parse_dicom_file("final_data/dicoms/SCD0000101/48.dcm")
+    img = dicom['pixel_data']
+
+    width, height = img.shape
+
+    mask = poly_to_mask(contour, width, height)
+    plt.imshow(img, cmap='gray', interpolation=None)
+    plt.imshow(mask, cmap='gray', interpolation=None, alpha = 0.3)
+    plt.show()
+    

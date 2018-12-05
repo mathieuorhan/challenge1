@@ -132,7 +132,7 @@ if __name__ == '__main__':
     h = 10
     for i in range(w*h):
         if i<len(loader.dataset):
-            ax = fig.add_subplot(w,h,i+1)
+            ax = fig.add_subplot(h,w,i+1)
             ax.imshow(loader.dataset[i][0], cmap='gray', interpolation=None)
             ax.imshow(loader.dataset[i][1], cmap='gray', interpolation=None, alpha = 0.3)      
             ax.set_axis_off()

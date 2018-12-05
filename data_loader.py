@@ -1,12 +1,14 @@
 from csv import DictReader
 from glob import glob
 import os
+import parsing
 
 class DataLoader:
 
     def __init__(self, data_path):
         self.data_path = data_path
         self.load_link()
+        self.load_dataset()
 
     def load_link(self):
         """ Load the link file and parse it
@@ -25,8 +27,8 @@ class DataLoader:
                 self.link_dict[row['patient_id']] = row['original_id']
 
 
-    def get_patient_data(self, patient_id):
-        """ Load the data (images + labels) of a given patient
+    def get_patient_fnames(self, patient_id):
+        """ Load the data filenames (images + labels) of a given patient
         :param patient_id: string, the id of the patient
     
         :raises:
@@ -37,19 +39,14 @@ class DataLoader:
 
 
     def filter_out_patient_missing_values(self, patient_id, dicom_fnames, label_fnames):
-        """ Remove the missing values for given a patient
-        :type self:
-        :param self:
+        """ Remove the missing values for given a patient. Return a unified list if [image fname, label f_name]
+        :param patient_id: string, the id of the patient
+
+        :param dicom_fnames: [fname1, fname2, ...] a list of the dicom filenames
     
-        :type dicom_fnames:
-        :param dicom_fnames:
+        :param label_fnames: [fname1, fname2, ...] a list of the i-contour filenames
     
-        :type label_fnames:
-        :param label_fnames:
-    
-        :raises:
-    
-        :rtype:
+        :return: [[image fname1, label f_name1], ...]
         """    
         filtered_fnames = []
         label_id = self.link_dict[patient_id]
@@ -89,12 +86,40 @@ class DataLoader:
         fnames = [fname for fname in fnames if not os.path.basename(fname).startswith('.')]
         return fnames
 
+    def get_patient_data(self, patient_id):
+        patient_data = []
+        fnames = self.get_patient_fnames(patient_id)
+        for dicom_fname, label_fname in fnames:
+            image = parsing.parse_dicom_file(dicom_fname)
+            if not image == None:
+                image = image['pixel_data']
+                w, h = image.shape
+                mask = parsing.parse_contour_file(label_fname)
+                if not mask == None:
+                    mask = parsing.poly_to_mask(mask, w, h)
+                    patient_data.append([image, mask])
+        return patient_data
+
     def load_dataset(self):
-        pass
+        self.dataset = []
+        for patient_id in self.link_dict.keys():
+            self.dataset += self.get_patient_data(patient_id)
 
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
     loader = DataLoader('final_data')
+    fig = plt.figure()
+    # size of the grid to plot
+    w = 10
+    h = 10
+    for i in range(w*h):
+        if i<len(loader.dataset):
+            ax = fig.add_subplot(w,h,i+1)
+            ax.imshow(loader.dataset[i][0], cmap='gray', interpolation=None)
+            ax.imshow(loader.dataset[i][1], cmap='gray', interpolation=None, alpha = 0.3)      
+            ax.set_axis_off()
+    plt.show()
     
 
     

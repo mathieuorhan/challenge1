@@ -4,6 +4,8 @@ import os
 import parsing
 
 class DataLoader:
+    """ Load the dataset from the raw files
+    """
 
     def __init__(self, data_path):
         self.data_path = data_path
@@ -86,7 +88,13 @@ class DataLoader:
         fnames = [fname for fname in fnames if not os.path.basename(fname).startswith('.')]
         return fnames
 
-    def get_patient_data(self, patient_id):
+    def get_patient_data(self, patient_id): 
+        """ Get the image and masks for a given patient
+
+        :param patient_id: string, the id of the patient  
+    
+        :return: [[image1, mask1], [image2, mask2], ...]
+        """    
         patient_data = []
         fnames = self.get_patient_fnames(patient_id)
         for dicom_fname, label_fname in fnames:
@@ -101,14 +109,19 @@ class DataLoader:
         return patient_data
 
     def load_dataset(self):
+        """ Load the entire dataset
+
+        """    
         self.dataset = []
         for patient_id in self.link_dict.keys():
             self.dataset += self.get_patient_data(patient_id)
 
 
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
     loader = DataLoader('final_data')
+
+    # display test
+    import matplotlib.pyplot as plt
     fig = plt.figure()
     # size of the grid to plot
     w = 10

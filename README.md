@@ -12,6 +12,9 @@ The function are tested individually, and then a display test is done (see the f
 ![Display of the iamges and masks](/figures/dataset_visu.png)
 *All the dataset is displayed on this image. We can visually inspect it.*
 
+Improvement :
+if the dataset was massive and couldn't fit in the memory, I would get the filenames and then put actual files in a queue with a fixed maximum capacity.
+
 ## Model training pipeline
 
 

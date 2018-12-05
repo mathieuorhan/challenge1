@@ -1,6 +1,6 @@
+import os
 from csv import DictReader
 from glob import glob
-import os
 import parsing
 
 class DataLoader:
@@ -9,7 +9,7 @@ class DataLoader:
 
     def __init__(self, data_path):
         """ Load the dataset
-        
+
         :param data_path: The root path of the dataset
         """
         self.data_path = data_path

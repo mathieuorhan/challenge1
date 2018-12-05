@@ -37,7 +37,7 @@ class DataLoader:
         """ Load the data filenames (images + labels) of a given patient
         :param patient_id: string, the id of the patient
     
-        :raises:
+        :return: [[image fname1, label f_name1], ...]
         """            
         dicom_fnames = self.get_patient_dicom_fnames(patient_id)
         label_fnames = self.get_patient_label_fnames(patient_id)
